@@ -2,6 +2,7 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
 import com.joeybasile.knowledgemanagement.data.database.root.NotesEntity
 import com.joeybasile.knowledgemanagement.domain.repository.local.NoteRepositoryImpl
 import com.joeybasile.knowledgemanagement.util.SelectedNoteUseCase
@@ -14,16 +15,13 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class SeeNoteViewModel : ViewModel(), KoinComponent {
-    private val noteRepositoryImpl: NoteRepositoryImpl by inject()
+    private val tokenRepository: TokenRepository by inject()
     private val navigator: NavigatorImpl by inject()
-    private val selectedNoteUseCase: SelectedNoteUseCase by inject()
 
     private val _state = MutableStateFlow(SeeNoteState())
     val state: StateFlow<SeeNoteState> = _state.asStateFlow()
 
-    init {
-        loadSelectedNote()
-    }
+
 
     fun handleEvent(event: SeeNoteEvent) {
         when (event) {
@@ -32,17 +30,6 @@ class SeeNoteViewModel : ViewModel(), KoinComponent {
             is SeeNoteEvent.SaveAndNavigateBack -> saveAndNavigateBack()
         }
     }
-
-    private fun loadSelectedNote() {
-        _state.value = _state.value.copy(
-            idA = selectedNoteUseCase.idA,
-            idB = selectedNoteUseCase.idB,
-            title = selectedNoteUseCase.noteTitle,
-            content = selectedNoteUseCase.noteContent,
-            createdAt = selectedNoteUseCase.createdAt
-        )
-    }
-
     /*
     _state.value gives you the current state object.
 .copy() creates a new instance of the state object.

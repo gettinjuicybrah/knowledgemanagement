@@ -1,4 +1,4 @@
-package com.joeybasile.knowledgemanagement
+/*package com.joeybasile.knowledgemanagement
 
 import platform.UIKit.UIDevice
 
@@ -7,3 +7,5 @@ class IOSPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = IOSPlatform()
+
+ */

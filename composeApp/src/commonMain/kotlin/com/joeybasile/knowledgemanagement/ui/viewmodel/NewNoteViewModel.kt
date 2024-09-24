@@ -2,8 +2,8 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joeybasile.knowledgemanagement.domain.repository.local.NoteRepositoryImpl
-import com.joeybasile.knowledgemanagement.data.database.root.NotesEntity
+import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
+import com.joeybasile.knowledgemanagement.network.service.PrivateService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,10 +11,10 @@ import kotlinx.coroutines.launch
 import com.joeybasile.knowledgemanagement.ui.navigation.NavigatorImpl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.UUID
 
 class NewNoteViewModel : ViewModel(), KoinComponent {
-    private val noteRepositoryImpl: NoteRepositoryImpl by inject()
+    private val privateService: PrivateService by inject()
+    private val tokenRepository: TokenRepository by inject()
     private val navigator: NavigatorImpl by inject()
 
     private val _state = MutableStateFlow(NewNoteState())
@@ -24,7 +24,7 @@ class NewNoteViewModel : ViewModel(), KoinComponent {
         when (event) {
             is NewNoteEvent.UpdateTitle -> updateTitle(event.title)
             is NewNoteEvent.UpdateContent -> updateContent(event.content)
-            is NewNoteEvent.SaveNote -> saveNote()
+            is NewNoteEvent.InsertNote -> insertNote()
             is NewNoteEvent.NavigateBack -> navigateBack()
         }
     }
@@ -37,27 +37,16 @@ class NewNoteViewModel : ViewModel(), KoinComponent {
         _state.value = _state.value.copy(content = content)
     }
 
-    private fun saveNote() {
+    private fun insertNote() {
         viewModelScope.launch {
-            val idA = generateLocalToken()
-            val idB = generateLocalToken()
-            val note = NotesEntity(
-                idA = idA,
-                idB = idB,
-                title = _state.value.title,
-                content = _state.value.content,
-                createdAt = System.currentTimeMillis(),
-                updatedAt = System.currentTimeMillis()
-            )
-            try {
-                noteRepositoryImpl.insertNote(note)
+            val accessToken = tokenRepository.getAccessToken()
+            val refreshToken = tokenRepository.getRefreshToken()
+            val title = _state.value.title
+            val content = _state.value.content
+                privateService.insertNote(accessToken, refreshToken, title, content)
                 navigateBack()
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(error = e.message ?: "Failed to save note")
-            }
         }
     }
-
     private fun navigateBack() {
         navigator.popBackStack()
     }
@@ -72,9 +61,6 @@ data class NewNoteState(
 sealed class NewNoteEvent {
     data class UpdateTitle(val title: String) : NewNoteEvent()
     data class UpdateContent(val content: String) : NewNoteEvent()
-    object SaveNote : NewNoteEvent()
+    object InsertNote : NewNoteEvent()
     object NavigateBack : NewNoteEvent()
-}
-private fun generateLocalToken(): String {
-    return UUID.randomUUID().toString()
 }

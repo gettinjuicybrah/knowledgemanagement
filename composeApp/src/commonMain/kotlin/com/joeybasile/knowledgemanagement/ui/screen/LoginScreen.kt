@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.joeybasile.knowledgemanagement.ui.viewmodel.LoginEvent
-import com.joeybasile.knowledgemanagement.ui.LoginViewModel
+import com.joeybasile.knowledgemanagement.ui.viewmodel.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -75,6 +75,7 @@ fun LoginScreen() {
         ) {
             Text("Register")
         }
+        /*
         Spacer(Modifier.height(8.dp))
         Button(
             onClick = { viewModel.handleEvent(LoginEvent.ContinueWithoutLogin) },
@@ -83,6 +84,7 @@ fun LoginScreen() {
         ) {
             Text("Continue Without Login")
         }
+         */
     }
 
     // Error popup

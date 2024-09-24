@@ -2,9 +2,8 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joeybasile.knowledgemanagement.util.SelectedNoteUseCase
-import data.database.root.NotesEntity
-import domain.repository.local.NoteRepositoryImpl
+import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
+import com.joeybasile.knowledgemanagement.network.service.PrivateService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,14 +11,11 @@ import kotlinx.coroutines.launch
 import com.joeybasile.knowledgemanagement.ui.navigation.NavigatorImpl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.text.SimpleDateFormat
-import java.util.*
 
 class ListNotesViewModel : ViewModel(), KoinComponent {
-    private val noteRepositoryImpl: NoteRepositoryImpl by inject()
     private val navigator: NavigatorImpl by inject()
-    private val selectedNoteUseCase: SelectedNoteUseCase by inject()
-
+    private val tokenRepository: TokenRepository by inject()
+    private val privateService: PrivateService by inject()
     private val _state = MutableStateFlow(ListNotesState())
     val state: StateFlow<ListNotesState> = _state.asStateFlow()
 
@@ -30,19 +26,20 @@ class ListNotesViewModel : ViewModel(), KoinComponent {
     fun handleEvent(event: ListNotesEvent) {
         when (event) {
             is ListNotesEvent.SelectNote -> selectNote(event.note)
-            is ListNotesEvent.ShowNoteDetails -> showNoteDetails(event.note)
-            is ListNotesEvent.DeleteNote -> deleteNote(event.note)
+            //is ListNotesEvent.ShowNoteDetails -> showNoteDetails(event.note)
+            //is ListNotesEvent.DeleteNote -> deleteNote(event.note)
             /*
             The presence or absence of is depends on whether we're checking
             a type (with potential associated data) or matching against a specific object instance.
              */
             ListNotesEvent.NavigateBack -> navigateBack()
-            ListNotesEvent.DismissNoteDetails -> dismissNoteDetails()
+            //ListNotesEvent.DismissNoteDetails -> dismissNoteDetails()
         }
     }
 
     private fun loadNotes() {
         viewModelScope.launch {
+            privateService.listNotes(tokenRepository.getAccessToken()!!, tokenRepository.getRefreshToken()!!)
             noteRepositoryImpl.getAllNotes().collect { notes ->
                 println("Received updated notes: ${notes.size}")
                 _state.value = _state.value.copy(notes = notes)

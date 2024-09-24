@@ -2,16 +2,15 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joeybasile.knowledgemanagement.domain.repository.local.TokenRepository
+import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.joeybasile.knowledgemanagement.ui.navigation.NavigatorImpl
-import com.joeybasile.knowledgemanagement.network.api.services.PublicService
+import com.joeybasile.knowledgemanagement.network.service.PublicService
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.UUID
 
 class LoginViewModel() : ViewModel(), KoinComponent {
 
@@ -27,7 +26,6 @@ class LoginViewModel() : ViewModel(), KoinComponent {
             is LoginEvent.UpdatePassword -> updatePassword(event.password)
             is LoginEvent.AttemptLogin -> attemptLogin()
             is LoginEvent.Register -> register()
-            is LoginEvent.ContinueWithoutLogin -> continueWithoutLogin()
             is LoginEvent.DismissError -> dismissError()
         }
     }
@@ -64,18 +62,7 @@ class LoginViewModel() : ViewModel(), KoinComponent {
         navigator.navToRegister()
     }
 
-    private fun continueWithoutLogin() {
-        viewModelScope.launch {
-            val localToken = generateLocalToken()
-            val expiration = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000 // 7 days
-            tokenRepository.updateLocalToken(localToken, expiration.toString())
-            navigator.navToHome()
-        }
-    }
 
-    private fun generateLocalToken(): String {
-        return UUID.randomUUID().toString()
-    }
 }
 
 data class LoginState(
@@ -90,6 +77,5 @@ sealed class LoginEvent {
     data class UpdatePassword(val password: String) : LoginEvent()
     object AttemptLogin : LoginEvent()
     object Register : LoginEvent()
-    object ContinueWithoutLogin : LoginEvent()
     object DismissError : LoginEvent()
 }

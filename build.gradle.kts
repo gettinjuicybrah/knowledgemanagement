@@ -6,4 +6,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
+
+    //put plugin on class path so plugins can find and apply.
+    alias(libs.plugins.kotlin.serialization) apply false
 }

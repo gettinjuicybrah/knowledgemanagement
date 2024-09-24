@@ -1,5 +1,19 @@
 package com.joeybasile.knowledgemanagement.network
 
+import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+
 /*
 Will be able to call this function from each
 individual platform's entry point.
@@ -40,6 +54,7 @@ class KtorHttpClient(private val engine: HttpClientEngine) : KoinComponent {
                     }
                 )
             }
+            /*
             install(Auth) {
                 //impl. here. would use Bear, refresh tokens, access tokens.
                 bearer {
@@ -70,6 +85,7 @@ class KtorHttpClient(private val engine: HttpClientEngine) : KoinComponent {
 
                 }
             }
+             */
             defaultRequest {
                 url("http://198.199.122.146:8080")
             }

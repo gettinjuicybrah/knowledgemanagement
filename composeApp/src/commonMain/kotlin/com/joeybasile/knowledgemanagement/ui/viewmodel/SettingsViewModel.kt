@@ -2,6 +2,7 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
 import com.joeybasile.knowledgemanagement.domain.repository.local.TokenRepositoryImpl
 import com.joeybasile.knowledgemanagement.domain.repository.local.UserRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class SettingsViewModel : ViewModel(), KoinComponent {
-    private val tokenRepository: TokenRepositoryImpl by inject()
+    private val tokenRepository: TokenRepository by inject()
     private val userRepository: UserRepositoryImpl by inject()
     private val navigator: NavigatorImpl by inject()
 

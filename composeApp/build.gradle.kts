@@ -9,6 +9,12 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+
+    alias(libs.plugins.kotlin.serialization)
+
+    id("androidx.room") version "2.7.0-alpha07"
+    id("com.google.devtools.ksp") version "2.0.0-1.0.22" //ksp for room annotation processing
+
 }
 
 kotlin {
@@ -38,7 +44,11 @@ kotlin {
     }
     
     jvm("desktop")
-    
+    // Room step6 part1 for adding ksp src directory to use AppDatabase::class.instantiateImpl() in iosMain:
+    // Due to https://issuetracker.google.com/u/0/issues/342905180
+    sourceSets.commonMain {
+        kotlin.srcDir("build/generated/ksp/metadata")
+    }
     listOf(
         iosX64(),
         iosArm64(),
@@ -56,6 +66,11 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
+
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -64,12 +79,25 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
+            implementation(libs.navigation.compose)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+
+            implementation("androidx.room:room-runtime:2.7.0-alpha07")
+            implementation(libs.androidx.sqlite.bundled)
+
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+
+            implementation(libs.bundles.ktor)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+
+            implementation(libs.ktor.client.okhttp)
         }
     }
 }
@@ -122,3 +150,34 @@ compose.desktop {
         }
     }
 }
+
+//Room step3: path where we want to generate the schemas
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+//Room step5  KSP For processing Room annotations , Otherwise we will get Is Room annotation processor correctly configured? error
+dependencies {
+
+    implementation(project(":composeApp"))
+    implementation(project(":composeApp"))
+    // Update: https://issuetracker.google.com/u/0/issues/342905180
+    add("kspCommonMainMetadata", "androidx.room:room-compiler:2.7.0-alpha05")
+
+}
+
+//Room step6 part 2 make all source sets to depend on kspCommonMainKotlinMetadata:  Update: https://issuetracker.google.com/u/0/issues/342905180
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
+    if (name != "kspCommonMainKotlinMetadata" ) {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
+}
+tasks.register("buildAll") {
+    dependsOn("assembleRelease")
+    dependsOn("packageReleaseExe")
+// macOSdependsOn(":desktopApp:packageReleaseDmg")
+    //linux./gradlew :desktopApp:packageReleaseAppImage    // for Linux
+}
+
+
+

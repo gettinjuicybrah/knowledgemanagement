@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import data.database.root.NotesEntity
 import com.joeybasile.knowledgemanagement.ui.viewmodel.ListNotesEvent
 import com.joeybasile.knowledgemanagement.ui.viewmodel.ListNotesViewModel
 import org.koin.compose.viewmodel.koinViewModel
