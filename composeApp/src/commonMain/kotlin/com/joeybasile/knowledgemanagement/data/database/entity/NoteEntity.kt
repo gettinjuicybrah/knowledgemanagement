@@ -1,4 +1,4 @@
-package com.joeybasile.knowledgemanagement.data.database
+package com.joeybasile.knowledgemanagement.data.database.entity
 
 import androidx.room.Entity
 import kotlinx.serialization.Serializable
@@ -13,7 +13,7 @@ data class NotesEntity(
     val idB: String,
     val title: String,
     val content: String,
-    val creation_date: Long,
-    val last_edit_date: Long,
+    val creation_date: String,
+    val last_edit_date: String,
     var version: Int
 )

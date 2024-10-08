@@ -2,20 +2,22 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
-import com.joeybasile.knowledgemanagement.network.service.PrivateService
+import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
+import com.joeybasile.knowledgemanagement.service.NoteService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.joeybasile.knowledgemanagement.ui.navigation.NavigatorImpl
+import com.joeybasile.knowledgemanagement.util.SelectedNoteUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class ListNotesViewModel : ViewModel(), KoinComponent {
     private val navigator: NavigatorImpl by inject()
-    private val tokenRepository: TokenRepository by inject()
-    private val privateService: PrivateService by inject()
+    private val noteService: NoteService by inject()
+    private val selectedNoteUseCase: SelectedNoteUseCase by inject()
+
     private val _state = MutableStateFlow(ListNotesState())
     val state: StateFlow<ListNotesState> = _state.asStateFlow()
 
@@ -34,13 +36,19 @@ class ListNotesViewModel : ViewModel(), KoinComponent {
              */
             ListNotesEvent.NavigateBack -> navigateBack()
             //ListNotesEvent.DismissNoteDetails -> dismissNoteDetails()
+            is ListNotesEvent.DeleteNote -> TODO()
+            ListNotesEvent.DismissNoteDetails -> TODO()
+            is ListNotesEvent.ShowNoteDetails -> TODO()
+            is FolderDirectoryEvent.DeleteNote -> TODO()
+            is FolderDirectoryEvent.SelectNote -> TODO()
+            is FolderDirectoryEvent.ShowNoteDetails -> TODO()
         }
     }
 
     private fun loadNotes() {
         viewModelScope.launch {
-            privateService.listNotes(tokenRepository.getAccessToken()!!, tokenRepository.getRefreshToken()!!)
-            noteRepositoryImpl.getAllNotes().collect { notes ->
+
+            noteService.getAllNotes().collect { notes ->
                 println("Received updated notes: ${notes.size}")
                 _state.value = _state.value.copy(notes = notes)
             }
@@ -53,8 +61,8 @@ class ListNotesViewModel : ViewModel(), KoinComponent {
             idB = note.idB!!
             noteTitle = note.title
             noteContent = note.content
-            createdAt = note.createdAt
-            updatedAt = note.updatedAt
+            createdAt = note.creation_date
+            updatedAt = note.last_edit_date
         }
         navigator.navToSeeNote()
     }
@@ -65,7 +73,7 @@ class ListNotesViewModel : ViewModel(), KoinComponent {
 
     private fun deleteNote(note: NotesEntity) {
         viewModelScope.launch {
-            noteRepositoryImpl.deleteNote(note)
+            noteService.deleteNote(note)
             dismissNoteDetails()
         }
     }
@@ -78,10 +86,6 @@ class ListNotesViewModel : ViewModel(), KoinComponent {
         _state.value = _state.value.copy(selectedNoteDetails = null)
     }
 
-    fun formatDate(timestamp: Long): String {
-        val sdf = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
-        return sdf.format(Date(timestamp))
-    }
 }
 
 data class ListNotesState(

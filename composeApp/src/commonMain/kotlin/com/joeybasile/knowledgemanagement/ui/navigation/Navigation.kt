@@ -24,6 +24,9 @@ fun NavHostController() {
         composable(route = Screen.ListNotesScreen.route) {
             ListNotesScreen()
         }
+        composable(route = Screen.FolderDirectoryScreen.route) {
+            FolderDirectoryScreen()
+        }
         composable(route = Screen.NewNoteScreen.route) {
             NewNoteScreen()
         }
@@ -48,6 +51,7 @@ fun NavHostController() {
 sealed class Screen(val route: String) {
     object HomeScreen : Screen("home_screen")
     object ListNotesScreen : Screen("listnotes_screen")
+    object FolderDirectoryScreen : Screen("folderdirectory_screen")
     object NewNoteScreen : Screen("newnote_screen")
     object SeeNoteScreen : Screen("seenote_screen")
     object SettingsScreen : Screen("settings_screen")

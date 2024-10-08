@@ -2,8 +2,7 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
-import com.joeybasile.knowledgemanagement.network.service.PrivateService
+import com.joeybasile.knowledgemanagement.service.NoteService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,10 +10,12 @@ import kotlinx.coroutines.launch
 import com.joeybasile.knowledgemanagement.ui.navigation.NavigatorImpl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
 
 class NewNoteViewModel : ViewModel(), KoinComponent {
-    private val privateService: PrivateService by inject()
-    private val tokenRepository: TokenRepository by inject()
+    private val noteService: NoteService by inject()
+    //private val privateService: PrivateService by inject()
+    //private val tokenRepository: TokenRepository by inject()
     private val navigator: NavigatorImpl by inject()
 
     private val _state = MutableStateFlow(NewNoteState())
@@ -39,11 +40,16 @@ class NewNoteViewModel : ViewModel(), KoinComponent {
 
     private fun insertNote() {
         viewModelScope.launch {
-            val accessToken = tokenRepository.getAccessToken()
-            val refreshToken = tokenRepository.getRefreshToken()
-            val title = _state.value.title
-            val content = _state.value.content
-                privateService.insertNote(accessToken, refreshToken, title, content)
+            val note = NotesEntity(
+                idA = "",
+                idB = "",
+                title = _state.value.title,
+                content = _state.value.content,
+                creation_date = "",
+                last_edit_date = "",
+                version = 1
+            )
+            noteService.insertNote(note)
                 navigateBack()
         }
     }

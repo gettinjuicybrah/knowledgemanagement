@@ -21,4 +21,14 @@ class TokenService: KoinComponent {
 
     }
 
+    suspend fun insertAccessToken(token: String, expire: String) {
+        tokenRepository.updateAccessToken(token, expire)
+    }
+
+    suspend fun insertRefreshToken(token: String, expire: String) {
+        tokenRepository.updateRefreshToken(token, expire)
+    }
+
+
+
 }

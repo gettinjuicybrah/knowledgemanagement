@@ -1,7 +1,7 @@
 package com.joeybasile.knowledgemanagement.data.database.data.repository
 
-import com.joeybasile.knowledgemanagement.data.database.TokenDao
-import com.joeybasile.knowledgemanagement.data.database.TokenEntity
+import com.joeybasile.knowledgemanagement.data.database.dao.TokenDao
+import com.joeybasile.knowledgemanagement.data.database.entity.TokenEntity
 
 class TokenRepositoryImpl(
     private val tokenDao: TokenDao

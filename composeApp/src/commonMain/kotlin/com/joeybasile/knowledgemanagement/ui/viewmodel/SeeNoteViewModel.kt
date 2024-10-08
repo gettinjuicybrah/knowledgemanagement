@@ -2,20 +2,20 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
-import com.joeybasile.knowledgemanagement.data.database.root.NotesEntity
-import com.joeybasile.knowledgemanagement.domain.repository.local.NoteRepositoryImpl
-import com.joeybasile.knowledgemanagement.util.SelectedNoteUseCase
+import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
+import com.joeybasile.knowledgemanagement.service.NoteService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.joeybasile.knowledgemanagement.ui.navigation.NavigatorImpl
+import com.joeybasile.knowledgemanagement.util.SelectedNoteUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class SeeNoteViewModel : ViewModel(), KoinComponent {
-    private val tokenRepository: TokenRepository by inject()
+    private val selectedNoteUseCase: SelectedNoteUseCase by inject()
+    private val noteService: NoteService by inject()
     private val navigator: NavigatorImpl by inject()
 
     private val _state = MutableStateFlow(SeeNoteState())
@@ -29,6 +29,17 @@ class SeeNoteViewModel : ViewModel(), KoinComponent {
             is SeeNoteEvent.UpdateContent -> updateContent(event.content)
             is SeeNoteEvent.SaveAndNavigateBack -> saveAndNavigateBack()
         }
+    }
+    private fun loadSelectedNote() {
+        _state.value = _state.value.copy(
+            idA = selectedNoteUseCase.idA,
+            idB = selectedNoteUseCase.idB,
+            title = selectedNoteUseCase.noteTitle,
+            content = selectedNoteUseCase.noteContent,
+            creation_date = selectedNoteUseCase.createdAt,
+            last_edit_date = selectedNoteUseCase.updatedAt,
+            version = selectedNoteUseCase.version
+        )
     }
     /*
     _state.value gives you the current state object.
@@ -47,33 +58,25 @@ The new state object is then assigned back to _state.value
     private fun saveAndNavigateBack() {
         viewModelScope.launch {
             val currentState = _state.value
-            val updatedNote = Note(
+            val updatedNote = NotesEntity(
                 idA = currentState.idA,
                 idB = currentState.idB,
                 title = currentState.title,
                 content = currentState.content,
-                updatedAt = System.currentTimeMillis(),
-                createdAt = currentState.createdAt
-                // Assuming you want to keep the original createdAt
-                // If you don't have it in the state, you might need to fetch it from the repository
+                creation_date = "",
+                last_edit_date = "",
+                version = currentState.version + 1
             )
 
 
-            noteRepositoryImpl.updateNote(updatedNote.toEntity())
+            noteService.updateNote(updatedNote)
 
 
             navigator.popBackStack()
         }
     }
-    private fun Note.toEntity(): NotesEntity =
-        NotesEntity(
-            idA = this.idA,
-            idB = this.idB,
-            title = this.title,
-            content = this.content,
-            createdAt = this.createdAt,
-            updatedAt = this.updatedAt
-        )
+
+
 }
 
 data class SeeNoteState(
@@ -81,8 +84,9 @@ data class SeeNoteState(
     val idB: String = "",
     val title: String = "",
     val content: String = "",
-    val createdAt: Long = -1,
-    val updatedAt: Long = -1
+    val creation_date: String = "",
+    val last_edit_date: String = "",
+    val version: Int = 0
 )
 
 sealed class SeeNoteEvent {

@@ -3,8 +3,7 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
-import com.joeybasile.knowledgemanagement.domain.repository.local.TokenRepositoryImpl
-import com.joeybasile.knowledgemanagement.domain.repository.local.UserRepositoryImpl
+import com.joeybasile.knowledgemanagement.service.TokenService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,8 +13,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class SettingsViewModel : ViewModel(), KoinComponent {
-    private val tokenRepository: TokenRepository by inject()
-    private val userRepository: UserRepositoryImpl by inject()
+    //private val tokenRepository: TokenRepository by inject()
+    private val tokenService: TokenService by inject()
     private val navigator: NavigatorImpl by inject()
 
     private val _state = MutableStateFlow(SettingsState())
@@ -35,15 +34,8 @@ class SettingsViewModel : ViewModel(), KoinComponent {
 
     private fun checkLoginStatus() {
         viewModelScope.launch {
-            val isLoggedIn = tokenRepository.getRefreshToken() != null
+            val isLoggedIn = tokenService.getRefreshToken() != null
             _state.value = _state.value.copy(isLoggedIn = isLoggedIn)
-        }
-    }
-
-    private fun getUserEmail(userIdA: String, userIdB: String) {
-        viewModelScope.launch {
-            val userInfo = userRepository.getUserInfo(userIdA, userIdB) // Assuming user ID is 1 for simplicity
-            _state.value = _state.value.copy(userEmail = userInfo?.email ?: "")
         }
     }
 
@@ -51,8 +43,8 @@ class SettingsViewModel : ViewModel(), KoinComponent {
         if (_state.value.isLoggedIn) {
             // Logout logic
             viewModelScope.launch {
-                tokenRepository.updateRefreshToken("", "") // Clear refresh token
-                tokenRepository.updateAccessToken("", "") // Clear access token
+                tokenService.insertRefreshToken("", "") // Clear refresh token
+                tokenService.insertAccessToken("", "") // Clear access token
                 _state.value = _state.value.copy(isLoggedIn = false, userEmail = "")
                 navigator.navToLogin() // Navigate to login screen after logout
             }

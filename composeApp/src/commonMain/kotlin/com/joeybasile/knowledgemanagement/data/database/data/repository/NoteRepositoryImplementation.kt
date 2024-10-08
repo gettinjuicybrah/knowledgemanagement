@@ -1,7 +1,7 @@
 package com.joeybasile.knowledgemanagement.data.database.data.repository
 
-import com.joeybasile.knowledgemanagement.data.database.NoteDao
-import com.joeybasile.knowledgemanagement.data.database.NotesEntity
+import com.joeybasile.knowledgemanagement.data.database.dao.NoteDao
+import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
 import kotlinx.coroutines.flow.Flow
 
 class NoteRepositoryImpl(

@@ -1,6 +1,6 @@
 package com.joeybasile.knowledgemanagement.data.database.data.repository
 
-import com.joeybasile.knowledgemanagement.data.database.TokenEntity
+import com.joeybasile.knowledgemanagement.data.database.entity.TokenEntity
 
 interface TokenRepository {
     suspend fun getAccessToken(): String?

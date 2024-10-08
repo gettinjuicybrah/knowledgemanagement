@@ -7,6 +7,7 @@ interface Navigator {
     fun navToSettings()
     fun navToSplash()
     fun navToListNotes()
+    fun navToFolderDirectory()
     fun navToSeeNote()
     fun navToNewNote()
     fun popBackStack()

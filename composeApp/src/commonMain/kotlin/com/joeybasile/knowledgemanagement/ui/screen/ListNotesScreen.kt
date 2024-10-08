@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
 import com.joeybasile.knowledgemanagement.ui.viewmodel.ListNotesEvent
 import com.joeybasile.knowledgemanagement.ui.viewmodel.ListNotesViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -51,8 +52,8 @@ fun ListNotesScreen() {
             NoteDetailsDialog(
                 note = note,
                 onDismiss = { viewModel.handleEvent(ListNotesEvent.DismissNoteDetails) },
-                onDelete = { viewModel.handleEvent(ListNotesEvent.DeleteNote(note)) },
-                formatDate = viewModel::formatDate
+                onDelete = { viewModel.handleEvent(ListNotesEvent.DeleteNote(note)) }
+                //formatDate = viewModel::formatDate
             )
         }
     }
@@ -86,16 +87,16 @@ fun NoteItem(
 fun NoteDetailsDialog(
     note: NotesEntity,
     onDismiss: () -> Unit,
-    onDelete: () -> Unit,
-    formatDate: (Long) -> String
+    onDelete: () -> Unit
+    //formatDate: (Long) -> String
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(note.title) },
         text = {
             Column {
-                Text("Created: ${formatDate(note.createdAt)}")
-                Text("Last edited: ${formatDate(note.updatedAt)}")
+                Text("Created: ")
+                Text("Last edited: ")
             }
         },
         confirmButton = {

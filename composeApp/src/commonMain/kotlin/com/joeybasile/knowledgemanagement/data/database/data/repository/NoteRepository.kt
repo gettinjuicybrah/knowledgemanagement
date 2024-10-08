@@ -1,6 +1,6 @@
 package com.joeybasile.knowledgemanagement.data.database.data.repository
 
-import com.joeybasile.knowledgemanagement.data.database.NotesEntity
+import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
 import kotlinx.coroutines.flow.Flow
 
 interface NoteRepository {

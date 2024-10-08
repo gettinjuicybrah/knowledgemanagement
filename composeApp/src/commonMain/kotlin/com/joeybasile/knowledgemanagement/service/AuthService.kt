@@ -9,13 +9,17 @@ class AuthService: KoinComponent {
     private val tokenService: TokenService by inject()
 
     suspend fun login(username: String, password: String){
-        publicAPIService.login(username, password)
+        publicAPIService.login(username, password).onSuccess { loginResponse ->
+            tokenService.insertAccessToken(loginResponse.accessToken, loginResponse.accessTokenExpiry)
+            tokenService.insertRefreshToken(loginResponse.refreshToken, loginResponse.refreshTokenExpiry)
+        }
     }
     suspend fun register(username: String, password: String){
-
+        publicAPIService.register(username, password)
     }
-    suspend fun ensureAccessToken(username: String, password: String): Boolean{
 
-    }
+    /*suspend fun ensureAccessToken(username: String, password: String): Boolean{
+
+    }*/
 
 }

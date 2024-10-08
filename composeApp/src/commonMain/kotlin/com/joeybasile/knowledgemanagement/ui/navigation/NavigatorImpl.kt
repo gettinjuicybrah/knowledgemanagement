@@ -34,6 +34,9 @@ class NavigatorImpl() : Navigator, KoinComponent {
     override fun navToListNotes() {
         navController.navigate(Screen.ListNotesScreen.route)
     }
+    override fun navToFolderDirectory() {
+        navController.navigate(Screen.FolderDirectoryScreen.route)
+    }
 
     override fun navToSeeNote() {
         navController.navigate(Screen.SeeNoteScreen.route)

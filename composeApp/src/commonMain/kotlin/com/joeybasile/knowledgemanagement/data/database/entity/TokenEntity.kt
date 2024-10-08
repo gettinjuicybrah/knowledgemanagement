@@ -1,4 +1,4 @@
-package com.joeybasile.knowledgemanagement.data.database
+package com.joeybasile.knowledgemanagement.data.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

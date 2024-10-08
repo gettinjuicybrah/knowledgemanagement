@@ -1,5 +1,8 @@
 package com.joeybasile.knowledgemanagement.data.database.data.repository
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Note(
     val idA: String,
     val idB: String,
@@ -7,5 +10,5 @@ data class Note(
     val content: String,
     val creation_date: Long,
     val last_edit_date: Long,
-    val version: Int
+    var version: Int
 )

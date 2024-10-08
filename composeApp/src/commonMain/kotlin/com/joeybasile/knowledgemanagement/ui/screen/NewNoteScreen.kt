@@ -28,7 +28,7 @@ fun NewNoteScreen() {
                     }
                 },
                 actions = {
-                    TextButton(onClick = { viewModel.handleEvent(NewNoteEvent.SaveNote) }) {
+                    TextButton(onClick = { viewModel.handleEvent(NewNoteEvent.InsertNote) }) {
                         Text("Save", color = MaterialTheme.colors.onPrimary)
                     }
                 }

@@ -2,12 +2,8 @@ package com.joeybasile.knowledgemanagement.di
 
 import com.joeybasile.knowledgemanagement.data.database.DBFactory
 import com.joeybasile.knowledgemanagement.data.database.LocalDatabase
-import com.joeybasile.knowledgemanagement.data.database.NoteDao
-import com.joeybasile.knowledgemanagement.data.database.TokenDao
-import com.joeybasile.knowledgemanagement.data.database.data.repository.NoteRepository
-import com.joeybasile.knowledgemanagement.data.database.data.repository.NoteRepositoryImpl
-import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
-import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepositoryImpl
+import com.joeybasile.knowledgemanagement.data.database.dao.*
+import com.joeybasile.knowledgemanagement.data.database.data.repository.*
 import com.joeybasile.knowledgemanagement.network.KtorHttpClient
 import com.joeybasile.knowledgemanagement.ui.navigation.NavigatorImpl
 import io.ktor.client.HttpClient
@@ -20,6 +16,9 @@ import org.koin.dsl.module
 import com.joeybasile.knowledgemanagement.service.*
 import com.joeybasile.knowledgemanagement.network.api.*
 import com.joeybasile.knowledgemanagement.ui.viewmodel.*
+
+import com.joeybasile.knowledgemanagement.util.*
+
 expect val platformModule: Module
 
 val sharedModule = module {
@@ -34,6 +33,12 @@ val sharedModule = module {
     single<NoteDao> {
         get<LocalDatabase>().getNoteDao()
     }
+    single<FolderDao> {
+        get<LocalDatabase>().getFolderDao()
+    }
+    single<FolderMembersDao> {
+        get<LocalDatabase>().getFolderMembersDao()
+    }
     single<HttpClient> {
         val ktorHttpClient: KtorHttpClient = get()
         ktorHttpClient.create()
@@ -45,7 +50,8 @@ val sharedModule = module {
 
     singleOf(::TokenRepositoryImpl).bind<TokenRepository>()
     singleOf(::NoteRepositoryImpl).bind<NoteRepository>()
-
+    singleOf(::FolderRepositoryImpl).bind<FolderRepository>()
+    singleOf(::SelectedNoteUseCase)
     singleOf(::PublicAPI)
     singleOf(::PublicAPIService)
     singleOf(::PrivateAPI)

@@ -1,10 +1,10 @@
-package com.joeybasile.knowledgemanagement.data.database
+package com.joeybasile.knowledgemanagement.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.joeybasile.knowledgemanagement.data.database.TokenEntity
+import com.joeybasile.knowledgemanagement.data.database.entity.TokenEntity
 
 @Dao
 interface TokenDao {
