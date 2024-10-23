@@ -12,18 +12,18 @@ class NoteService: KoinComponent {
 
     suspend fun insertNote(note: NotesEntity){
         noteRepository.insertNote(note)
-        privateAPIService.insertNote(note)
+        //privateAPIService.insertNote(note)
     }
 
     suspend fun updateNote(note: NotesEntity){
         note.version += 1
         noteRepository.updateNote(note)
-        privateAPIService.updateNote(note)
+        //privateAPIService.updateNote(note)
     }
 
     suspend fun deleteNote(note: NotesEntity){
         noteRepository.deleteNote(note)
-        privateAPIService.deleteNote(note)
+        //privateAPIService.deleteNote(note)
     }
 
     suspend fun seeNote(note: NotesEntity){
@@ -31,7 +31,7 @@ class NoteService: KoinComponent {
     }
 
     //filter the list down for caterment
-    fun getAllNotes(): Flow<List<NotesEntity>> {
+    suspend fun getAllNotes(): Flow<List<NotesEntity>> {
         return noteRepository.getAllNotes()
     }
 }

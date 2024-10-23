@@ -19,13 +19,15 @@ import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
 import com.joeybasile.knowledgemanagement.ui.viewmodel.ListNotesEvent
 import com.joeybasile.knowledgemanagement.ui.viewmodel.ListNotesViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun ListNotesScreen() {
     val viewModel: ListNotesViewModel = koinViewModel()
     //the state we expose to UI. Read-Only
-    val state by viewModel.state.collectAsState()
-
+   val state by viewModel.state.collectAsState()
+    //val state = viewModel.state.value
     Scaffold(
         topBar = {
             TopAppBar(
@@ -42,7 +44,7 @@ fun ListNotesScreen() {
             items(state.notes) { note ->
                 NoteItem(
                     note = note,
-                    onNoteClick = { viewModel.handleEvent(ListNotesEvent.SelectNote(note)) },
+                    onNoteClick = { viewModel.handleEvent(ListNotesEvent.NavigateToSelectNote(note)) },
                     onMoreClick = { viewModel.handleEvent(ListNotesEvent.ShowNoteDetails(note)) }
                 )
             }

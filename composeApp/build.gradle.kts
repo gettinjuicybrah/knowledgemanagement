@@ -1,72 +1,41 @@
+// build.gradle.kts
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 
     alias(libs.plugins.kotlin.serialization)
-
-    id("androidx.room") version "2.7.0-alpha07"
-    id("com.google.devtools.ksp") version "2.0.0-1.0.22" //ksp for room annotation processing
-
+    //alias(libs.plugins.androidLibrary)
+    //id("androidx.room") version "2.7.0-alpha09"
+    //id("androidx.room")
 }
 
 kotlin {
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "composeApp"
-        browser {
-            val projectDirPath = project.projectDir.path
-            commonWebpackConfig {
-                outputFileName = "composeApp.js"
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(projectDirPath)
-                    }
-                }
-            }
-        }
-        binaries.executable()
-    }
-    
+
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
-    
-    jvm("desktop")
-    // Room step6 part1 for adding ksp src directory to use AppDatabase::class.instantiateImpl() in iosMain:
-    // Due to https://issuetracker.google.com/u/0/issues/342905180
-    sourceSets.commonMain {
-        kotlin.srcDir("build/generated/ksp/metadata")
-    }
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
-        }
-    }
-    
+
+   jvm("desktop")
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
 
+            //for koin di in android
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
 
@@ -84,7 +53,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
-            implementation("androidx.room:room-runtime:2.7.0-alpha07")
+            //Room
+            implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
 
             api(libs.koin.core)
@@ -93,15 +63,16 @@ kotlin {
 
             implementation(libs.bundles.ktor)
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
 
             implementation(libs.ktor.client.okhttp)
         }
+
     }
 }
-
 android {
     namespace = "com.joeybasile.knowledgemanagement"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -128,8 +99,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true
@@ -137,6 +108,7 @@ android {
     dependencies {
         debugImplementation(compose.uiTooling)
     }
+
 }
 
 compose.desktop {
@@ -151,33 +123,13 @@ compose.desktop {
     }
 }
 
-//Room step3: path where we want to generate the schemas
+
 room {
     schemaDirectory("$projectDir/schemas")
 }
 
-//Room step5  KSP For processing Room annotations , Otherwise we will get Is Room annotation processor correctly configured? error
 dependencies {
-
-    implementation(project(":composeApp"))
-    implementation(project(":composeApp"))
-    // Update: https://issuetracker.google.com/u/0/issues/342905180
-    add("kspCommonMainMetadata", "androidx.room:room-compiler:2.7.0-alpha05")
-
+    //ksp(libs.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspDesktop", libs.androidx.room.compiler)
 }
-
-//Room step6 part 2 make all source sets to depend on kspCommonMainKotlinMetadata:  Update: https://issuetracker.google.com/u/0/issues/342905180
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
-    if (name != "kspCommonMainKotlinMetadata" ) {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
-}
-tasks.register("buildAll") {
-    dependsOn("assembleRelease")
-    dependsOn("packageReleaseExe")
-// macOSdependsOn(":desktopApp:packageReleaseDmg")
-    //linux./gradlew :desktopApp:packageReleaseAppImage    // for Linux
-}
-
-
-

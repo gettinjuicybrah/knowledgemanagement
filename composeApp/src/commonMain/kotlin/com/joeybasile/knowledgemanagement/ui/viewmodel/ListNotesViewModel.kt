@@ -1,7 +1,9 @@
 package com.joeybasile.knowledgemanagement.ui.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.State
 import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
 import com.joeybasile.knowledgemanagement.service.NoteService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +21,7 @@ class ListNotesViewModel : ViewModel(), KoinComponent {
     private val selectedNoteUseCase: SelectedNoteUseCase by inject()
 
     private val _state = MutableStateFlow(ListNotesState())
-    val state: StateFlow<ListNotesState> = _state.asStateFlow()
+    val state: StateFlow<ListNotesState> get() = _state.asStateFlow()
 
     init {
         loadNotes()
@@ -27,21 +29,12 @@ class ListNotesViewModel : ViewModel(), KoinComponent {
 
     fun handleEvent(event: ListNotesEvent) {
         when (event) {
-            is ListNotesEvent.SelectNote -> selectNote(event.note)
-            //is ListNotesEvent.ShowNoteDetails -> showNoteDetails(event.note)
-            //is ListNotesEvent.DeleteNote -> deleteNote(event.note)
-            /*
-            The presence or absence of is depends on whether we're checking
-            a type (with potential associated data) or matching against a specific object instance.
-             */
-            ListNotesEvent.NavigateBack -> navigateBack()
-            //ListNotesEvent.DismissNoteDetails -> dismissNoteDetails()
-            is ListNotesEvent.DeleteNote -> TODO()
-            ListNotesEvent.DismissNoteDetails -> TODO()
-            is ListNotesEvent.ShowNoteDetails -> TODO()
-            is FolderDirectoryEvent.DeleteNote -> TODO()
-            is FolderDirectoryEvent.SelectNote -> TODO()
-            is FolderDirectoryEvent.ShowNoteDetails -> TODO()
+            is ListNotesEvent.NavigateBack -> navigateBack()
+
+            is ListNotesEvent.NavigateToSelectNote -> navigateToSelectNote(event.note)
+            is ListNotesEvent.DeleteNote -> deleteNote(event.note)
+            is ListNotesEvent.DismissNoteDetails -> dismissNoteDetails()
+            is ListNotesEvent.ShowNoteDetails -> showNoteDetails(event.note)
         }
     }
 
@@ -55,7 +48,7 @@ class ListNotesViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    private fun selectNote(note: NotesEntity) {
+    private fun navigateToSelectNote(note: NotesEntity) {
         selectedNoteUseCase.apply {
             idA = note.idA!!
             idB = note.idB!!
@@ -94,7 +87,7 @@ data class ListNotesState(
 )
 
 sealed class ListNotesEvent {
-    data class SelectNote(val note: NotesEntity) : ListNotesEvent()
+    data class NavigateToSelectNote(val note: NotesEntity) : ListNotesEvent()
     data class ShowNoteDetails(val note: NotesEntity) : ListNotesEvent()
     data class DeleteNote(val note: NotesEntity) : ListNotesEvent()
     object NavigateBack : ListNotesEvent()

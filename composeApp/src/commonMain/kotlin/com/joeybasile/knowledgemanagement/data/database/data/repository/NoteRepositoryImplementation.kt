@@ -8,7 +8,7 @@ class NoteRepositoryImpl(
     private val dao: NoteDao
 ) : NoteRepository {
 
-    override fun getAllNotes(): Flow<List<NotesEntity>> {
+    override suspend fun getAllNotes(): Flow<List<NotesEntity>> {
         return dao.getAllNotes()
     }
 

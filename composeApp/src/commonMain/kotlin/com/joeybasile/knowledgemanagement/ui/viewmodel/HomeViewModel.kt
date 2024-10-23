@@ -14,6 +14,7 @@ class HomeViewModel() : ViewModel(), KoinComponent {
             is HomeEvent.NavigateToSettings -> navigateToSettings()
             is HomeEvent.NavigateToListNotes -> navigateToListNotes()
             is HomeEvent.NavigateToNewNote -> navigateToNewNote()
+            is HomeEvent.NavigateToFolderDirectory -> navigateToFolderDirectory()
         }
     }
     private fun navigateToSettings() {
@@ -25,10 +26,14 @@ class HomeViewModel() : ViewModel(), KoinComponent {
     private fun navigateToNewNote() {
         navigator.navToNewNote()
     }
+    private fun navigateToFolderDirectory(){
+        navigator.navToFolderDirectory()
+    }
 }
 sealed class HomeEvent {
     object NavigateToSettings : HomeEvent()
     object NavigateToListNotes : HomeEvent()
     object NavigateToNewNote : HomeEvent()
+    object NavigateToFolderDirectory: HomeEvent()
 
 }

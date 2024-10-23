@@ -1,5 +1,6 @@
 package com.joeybasile.knowledgemanagement.ui.screen
 
+import com.joeybasile.knowledgemanagement.ui.viewmodel.SettingsViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -11,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.joeybasile.knowledgemanagement.ui.viewmodel.SettingsEvent
-import com.joeybasile.knowledgemanagement.ui.viewmodel.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -48,6 +48,22 @@ fun SettingsScreen() {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(if (state.isLoggedIn) "Log Out" else "Log In")
+            }
+
+            // Add theme toggle
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Dark Theme",
+                    style = MaterialTheme.typography.body1
+                )
+                Switch(
+                    checked = state.isDarkTheme,
+                    onCheckedChange = { viewModel.handleEvent(SettingsEvent.ToggleTheme) }
+                )
             }
         }
     }

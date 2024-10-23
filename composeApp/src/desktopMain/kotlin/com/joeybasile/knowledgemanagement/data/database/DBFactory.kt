@@ -8,9 +8,13 @@ import java.io.File
 actual class DBFactory {
     actual fun createDatabase(): LocalDatabase {
         val dbFile = File(System.getProperty("java.io.tmpdir"), dbFileName)
-        return Room.databaseBuilder<LocalDatabase>(dbFile.absolutePath)
+
+        val db = Room.databaseBuilder<LocalDatabase>(dbFile.absolutePath)
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
+
+        return db
+
     }
 }

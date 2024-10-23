@@ -9,10 +9,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.joeybasile.knowledgemanagement.ui.viewmodel.NewNoteEvent
 import com.joeybasile.knowledgemanagement.ui.viewmodel.SeeNoteEvent
 import com.joeybasile.knowledgemanagement.ui.viewmodel.SeeNoteViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SeeNoteScreen() {
     val viewModel: SeeNoteViewModel = koinViewModel()
@@ -36,6 +39,33 @@ fun SeeNoteScreen() {
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
+
+            // Dropdown for Folder Selection
+            Spacer(modifier = Modifier.height(16.dp))
+            Box {
+                OutlinedButton(onClick = { viewModel.handleEvent(SeeNoteEvent.ToggleDropdown) }) {
+                    Text(state.selectedFolder?.title ?: "Select a folder")
+                }
+                DropdownMenu(
+                    expanded = state.isDropdownExpanded,
+                    onDismissRequest = { viewModel.handleEvent(SeeNoteEvent.ToggleDropdown) }
+                ) {
+                    state.folderList.forEach { folder ->
+                        DropdownMenuItem(onClick = {
+                            viewModel.handleEvent(SeeNoteEvent.UpdateFolder(folder))
+                        }) {
+                            Text(folder.title)
+                        }
+                    }
+                }
+            }
+            // Show selected folder
+            state.selectedFolder?.let {
+                Text("Selected Folder: ${it.title}", modifier = Modifier.padding(top = 8.dp))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             TextField(
                 value = state.title,
                 onValueChange = { viewModel.handleEvent(SeeNoteEvent.UpdateTitle(it)) },

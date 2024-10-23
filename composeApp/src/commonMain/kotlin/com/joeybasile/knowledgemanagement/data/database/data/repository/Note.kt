@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Note(
     val idA: String,
     val idB: String,
+    val parentFolderId: Int,
     val title: String,
     val content: String,
     val creation_date: Long,

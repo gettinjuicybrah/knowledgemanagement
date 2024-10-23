@@ -29,6 +29,9 @@ class TokenService: KoinComponent {
         tokenRepository.updateRefreshToken(token, expire)
     }
 
+    suspend fun initializeTokenIfNeeded(){
+        tokenRepository.initializeTokenIfNeeded()
+    }
 
 
 }

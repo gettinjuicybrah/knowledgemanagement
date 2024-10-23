@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.joeybasile.knowledgemanagement.ui.viewmodel.NewNoteEvent
 import com.joeybasile.knowledgemanagement.ui.viewmodel.NewNoteViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.forEach
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -35,12 +37,40 @@ fun NewNoteScreen() {
             )
         }
     ) { paddingValues ->
+
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
+            // Dropdown for Folder Selection
+            Spacer(modifier = Modifier.height(16.dp))
+            Box {
+                OutlinedButton(onClick = { viewModel.handleEvent(NewNoteEvent.ToggleDropdown) }) {
+                    Text(state.selectedFolder?.title ?: "Select a folder")
+                }
+                DropdownMenu(
+                    expanded = state.isDropdownExpanded,
+                    onDismissRequest = { viewModel.handleEvent(NewNoteEvent.ToggleDropdown) }
+                ) {
+                    state.folderList.forEach { folder ->
+                        DropdownMenuItem(onClick = {
+                            viewModel.handleEvent(NewNoteEvent.SelectFolder(folder))
+                        }) {
+                            Text(folder.title)
+                        }
+                    }
+                }
+            }
+            // Show selected folder
+            state.selectedFolder?.let {
+                Text("Selected Folder: ${it.title}", modifier = Modifier.padding(top = 8.dp))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             TextField(
                 value = state.title,
                 onValueChange = { viewModel.handleEvent(NewNoteEvent.UpdateTitle(it)) },
@@ -59,6 +89,8 @@ fun NewNoteScreen() {
                     .weight(1f),
                 maxLines = Int.MAX_VALUE
             )
+
+
 
             if (state.error != null) {
                 Text(

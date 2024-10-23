@@ -4,7 +4,7 @@ import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
 import kotlinx.coroutines.flow.Flow
 
 interface NoteRepository {
-    fun getAllNotes(): Flow<List<NotesEntity>>
+    suspend fun getAllNotes(): Flow<List<NotesEntity>>
     suspend fun getNoteById(idA: String, idB: String): NotesEntity?
     suspend fun insertNote(note: NotesEntity)
     suspend fun updateNote(note: NotesEntity)

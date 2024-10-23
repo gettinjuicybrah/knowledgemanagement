@@ -75,7 +75,7 @@ fun LoginScreen() {
         ) {
             Text("Register")
         }
-        /*
+
         Spacer(Modifier.height(8.dp))
         Button(
             onClick = { viewModel.handleEvent(LoginEvent.ContinueWithoutLogin) },
@@ -84,7 +84,7 @@ fun LoginScreen() {
         ) {
             Text("Continue Without Login")
         }
-         */
+
     }
 
     // Error popup
