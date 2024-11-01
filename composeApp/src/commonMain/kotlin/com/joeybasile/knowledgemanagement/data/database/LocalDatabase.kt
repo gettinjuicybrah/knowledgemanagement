@@ -1,31 +1,31 @@
 package com.joeybasile.knowledgemanagement.data.database
 
+import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import com.joeybasile.knowledgemanagement.data.database.dao.FolderDao
-import com.joeybasile.knowledgemanagement.data.database.dao.FolderMembersDao
 import com.joeybasile.knowledgemanagement.data.database.dao.NoteDao
 import com.joeybasile.knowledgemanagement.data.database.dao.TokenDao
+import com.joeybasile.knowledgemanagement.data.database.dao.UserDao
 import com.joeybasile.knowledgemanagement.data.database.entity.FolderEntity
-import com.joeybasile.knowledgemanagement.data.database.entity.FolderMembersEntity
 import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
 import com.joeybasile.knowledgemanagement.data.database.entity.TokenEntity
+import com.joeybasile.knowledgemanagement.data.database.entity.UserEntity
 
-@Database(entities = [NotesEntity::class, TokenEntity::class, FolderEntity::class, FolderMembersEntity::class], version = 1)
-abstract class LocalDatabase : RoomDatabase(), DB {
+@Database(entities = [NotesEntity::class, TokenEntity::class, FolderEntity::class, UserEntity::class], version = 1)
+@ConstructedBy (LocalDatabaseConstructor::class)
+abstract class LocalDatabase : RoomDatabase(){
 
     abstract fun getTokenDao(): TokenDao
     abstract fun getNoteDao(): NoteDao
     abstract fun getFolderDao(): FolderDao
-    abstract fun getFolderMembersDao(): FolderMembersDao
-
-    override fun clearAllTables() {
-        super.clearAllTables()
-    }
+    abstract fun getUserDao(): UserDao
 }
 
-internal const val dbFileName = "local.db"
-
-interface DB {
-    fun clearAllTables() {}
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object LocalDatabaseConstructor:RoomDatabaseConstructor<LocalDatabase>{
+    override fun initialize(): LocalDatabase
 }
+
+internal const val dbFileName = "local_db.db"

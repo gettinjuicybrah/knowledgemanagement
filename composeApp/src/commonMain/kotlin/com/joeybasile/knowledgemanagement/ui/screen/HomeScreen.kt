@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.joeybasile.knowledgemanagement.ui.theme.useTheme
 import com.joeybasile.knowledgemanagement.ui.viewmodel.HomeViewModel
 import com.joeybasile.knowledgemanagement.ui.viewmodel.HomeEvent
 import org.koin.compose.viewmodel.koinViewModel
@@ -29,7 +30,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun HomeScreen() {
     val viewModel: HomeViewModel = koinViewModel()
-
+    val themeState = useTheme()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -59,6 +60,17 @@ fun HomeScreen() {
                 Icon(Icons.Default.List, contentDescription = "List Notes")
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("View Notes")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { viewModel.handleEvent(HomeEvent.NavigateToFolderDirectory)},
+                Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Icon(Icons.Default.List, contentDescription = "Folder Directory")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Folder Directory")
             }
 
             Spacer(modifier = Modifier.height(16.dp))

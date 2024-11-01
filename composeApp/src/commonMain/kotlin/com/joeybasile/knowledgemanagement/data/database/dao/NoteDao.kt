@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
+    //This setup ensures that whenever the notes table is updated, the flow emits a new list of NotesEntity.
     @Query("SELECT * FROM notes")
     fun getAllNotes(): Flow<List<NotesEntity>>
 

@@ -16,11 +16,14 @@ import org.koin.dsl.module
 import com.joeybasile.knowledgemanagement.service.*
 import com.joeybasile.knowledgemanagement.network.api.*
 import com.joeybasile.knowledgemanagement.ui.viewmodel.*
-
+import com.joeybasile.knowledgemanagement.util.SelectedNoteUseCase
 import com.joeybasile.knowledgemanagement.util.*
+import org.koin.core.annotation.KoinReflectAPI
+import org.koin.dsl.single
 
 expect val platformModule: Module
 
+@OptIn(KoinReflectAPI::class)
 val sharedModule = module {
     single<LocalDatabase> {
         val dbFactory: DBFactory = get()
@@ -36,9 +39,10 @@ val sharedModule = module {
     single<FolderDao> {
         get<LocalDatabase>().getFolderDao()
     }
-    single<FolderMembersDao> {
-        get<LocalDatabase>().getFolderMembersDao()
+    single<UserDao> {
+        get<LocalDatabase>().getUserDao()
     }
+
     single<HttpClient> {
         val ktorHttpClient: KtorHttpClient = get()
         ktorHttpClient.create()
@@ -51,7 +55,9 @@ val sharedModule = module {
     singleOf(::TokenRepositoryImpl).bind<TokenRepository>()
     singleOf(::NoteRepositoryImpl).bind<NoteRepository>()
     singleOf(::FolderRepositoryImpl).bind<FolderRepository>()
-    singleOf(::SelectedNoteUseCase)
+    singleOf(::UserRepositoryImpl).bind<UserRepository>()
+    single<SelectedNoteUseCase>()
+    //singleOf(::SelectedNoteUseCase)
     singleOf(::PublicAPI)
     singleOf(::PublicAPIService)
     singleOf(::PrivateAPI)
@@ -60,6 +66,8 @@ val sharedModule = module {
     singleOf(::TokenService)
     singleOf(::NoteService)
     singleOf(::AuthService)
+    singleOf(::FolderService)
+    singleOf(::UserService)
 
     viewModelOf(::ListNotesViewModel)
     viewModelOf(::SeeNoteViewModel)
@@ -69,6 +77,7 @@ val sharedModule = module {
     viewModelOf(::RegisterViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::SettingsViewModel)
+    viewModelOf(::FolderDirectoryViewModel)
 }
 
 /*
@@ -119,7 +128,7 @@ val sharedModule = module {
     viewModelOf(::SplashViewModel)
     viewModelOf(::RegisterViewModel)
     viewModelOf(::HomeViewModel)
-    viewModelOf(::SettingsViewModel)
+    viewModelOf(::com.joeybasile.knowledgemanagement.ui.viewmodel.SettingsViewModel)
     single { SelectedNoteUseCase() }
 
     /*

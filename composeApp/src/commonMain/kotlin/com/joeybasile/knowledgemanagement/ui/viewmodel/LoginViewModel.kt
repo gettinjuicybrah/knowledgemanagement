@@ -26,6 +26,7 @@ class LoginViewModel() : ViewModel(), KoinComponent {
             is LoginEvent.AttemptLogin -> attemptLogin()
             is LoginEvent.Register -> register()
             is LoginEvent.DismissError -> dismissError()
+            is LoginEvent.ContinueWithoutLogin -> continueWithoutLogin()
         }
     }
     private fun updateUsername(username: String) {
@@ -51,6 +52,9 @@ class LoginViewModel() : ViewModel(), KoinComponent {
         navigator.navToRegister()
     }
 
+    private fun continueWithoutLogin() {
+        navigator.navToHome()
+    }
 
 }
 
@@ -67,4 +71,6 @@ sealed class LoginEvent {
     object AttemptLogin : LoginEvent()
     object Register : LoginEvent()
     object DismissError : LoginEvent()
+    object ContinueWithoutLogin: LoginEvent()
+
 }

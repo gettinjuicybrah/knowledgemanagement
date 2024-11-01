@@ -2,8 +2,9 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joeybasile.knowledgemanagement.data.database.data.repository.TokenRepository
 import com.joeybasile.knowledgemanagement.service.TokenService
+import com.joeybasile.knowledgemanagement.service.UserService
+import com.joeybasile.knowledgemanagement.ui.theme.ThemeManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,8 +14,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class SettingsViewModel : ViewModel(), KoinComponent {
-    //private val tokenRepository: TokenRepository by inject()
     private val tokenService: TokenService by inject()
+    private val userService: UserService by inject()
     private val navigator: NavigatorImpl by inject()
 
     private val _state = MutableStateFlow(SettingsState())
@@ -22,13 +23,14 @@ class SettingsViewModel : ViewModel(), KoinComponent {
 
     init {
         checkLoginStatus()
-        //getUserEmail(userRepository.getUserInfo().userIdA, userRepository.getUserInfo().userIdB)
+        observeTheme()
     }
 
     fun handleEvent(event: SettingsEvent) {
         when (event) {
             is SettingsEvent.ToggleLogin -> toggleLogin()
             is SettingsEvent.NavigateBack -> navigateBack()
+            is SettingsEvent.ToggleTheme -> toggleTheme()
         }
     }
 
@@ -39,17 +41,34 @@ class SettingsViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    private fun observeTheme() {
+        viewModelScope.launch {
+            val theme = userService.getTheme()
+            val isDark = theme == "dark"
+            ThemeManager.isDarkTheme = isDark // Initialize ThemeManager with stored preference
+            _state.value = _state.value.copy(isDarkTheme = isDark)
+
+        }
+    }
+
+    private fun toggleTheme() {
+        viewModelScope.launch {
+            val newThemeState = ThemeManager.toggleTheme()
+            val newTheme = if (newThemeState) "dark" else "light"
+            userService.updateTheme(newTheme)
+            _state.value = _state.value.copy(isDarkTheme = newThemeState)
+        }
+    }
+
     private fun toggleLogin() {
         if (_state.value.isLoggedIn) {
-            // Logout logic
             viewModelScope.launch {
-                tokenService.insertRefreshToken("", "") // Clear refresh token
-                tokenService.insertAccessToken("", "") // Clear access token
+                tokenService.insertRefreshToken("", "")
+                tokenService.insertAccessToken("", "")
                 _state.value = _state.value.copy(isLoggedIn = false, userEmail = "")
-                navigator.navToLogin() // Navigate to login screen after logout
+                navigator.navToLogin()
             }
         } else {
-            // Navigate to login screen
             navigator.navToLogin()
         }
     }
@@ -61,10 +80,12 @@ class SettingsViewModel : ViewModel(), KoinComponent {
 
 data class SettingsState(
     val isLoggedIn: Boolean = false,
-    val userEmail: String = ""
+    val userEmail: String = "",
+    val isDarkTheme: Boolean = false
 )
 
 sealed class SettingsEvent {
     object ToggleLogin : SettingsEvent()
     object NavigateBack : SettingsEvent()
+    object ToggleTheme : SettingsEvent()
 }
