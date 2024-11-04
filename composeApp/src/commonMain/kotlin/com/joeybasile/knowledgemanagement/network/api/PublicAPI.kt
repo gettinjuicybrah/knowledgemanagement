@@ -13,14 +13,14 @@ import org.koin.core.component.KoinComponent
 class PublicAPI(private val httpClient: HttpClient): KoinComponent {
 
     suspend fun login(loginRequest: LoginRequest): Result<LoginResponse> {
-        val response = httpClient.post("/public/Login") {
+        val response = httpClient.post("/public/login") {
             setBody(loginRequest)
         }
         return Result.success(response.body())
     }
 
     suspend fun register(registerRequest: RegisterRequest): Result<RegisterResponse> {
-        val response = httpClient.post("/public/Register") {
+        val response = httpClient.post("/public/register") {
             setBody(registerRequest)
         }
         return Result.success(response.body())
