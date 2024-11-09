@@ -2,7 +2,7 @@ package com.joeybasile.knowledgemanagement.data.database.data.repository
 
 import com.joeybasile.knowledgemanagement.data.database.dao.FolderDao
 import com.joeybasile.knowledgemanagement.data.database.entity.FolderEntity
-import com.joeybasile.knowledgemanagement.data.database.entity.TokenEntity
+import com.joeybasile.knowledgemanagement.util.generateUUID
 import kotlinx.coroutines.flow.Flow
 
 class FolderRepositoryImpl(
@@ -24,18 +24,20 @@ class FolderRepositoryImpl(
     override suspend fun deleteFolder(folder: FolderEntity) {
         folderDao.deleteFolder(folder)
     }
-    override suspend fun initializeRootFolderIfNeeded() {
-        if (folderDao.getFolderCount() == 0) {
+    override suspend fun initializeRootFolder() {
+
             val rootFolder = FolderEntity(
-                id = 0,
+                id = generateUUID(),
                 title = "root",
                 parentFolderId = null,
                 isExpanded = false
             )
             folderDao.initializeRootFolderRecord(rootFolder)
-        }
-    }
 
+    }
+    override suspend fun checkInitialize():Boolean{
+        return (folderDao.getFolderCount() == 0)
+    }
     override suspend fun getRootFolder(): FolderEntity{
         return folderDao.getRootFolder()
     }

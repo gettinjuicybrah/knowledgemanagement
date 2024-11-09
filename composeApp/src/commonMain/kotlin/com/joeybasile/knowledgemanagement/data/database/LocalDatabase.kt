@@ -10,10 +10,10 @@ import com.joeybasile.knowledgemanagement.data.database.dao.TokenDao
 import com.joeybasile.knowledgemanagement.data.database.dao.UserDao
 import com.joeybasile.knowledgemanagement.data.database.entity.FolderEntity
 import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
-import com.joeybasile.knowledgemanagement.data.database.entity.TokenEntity
+import com.joeybasile.knowledgemanagement.data.database.entity.*
 import com.joeybasile.knowledgemanagement.data.database.entity.UserEntity
 
-@Database(entities = [NotesEntity::class, TokenEntity::class, FolderEntity::class, UserEntity::class], version = 1)
+@Database(entities = [NotesEntity::class, AccessTokenEntity::class, RefreshTokenEntity::class, FolderEntity::class, UserEntity::class], version = 1)
 @ConstructedBy (LocalDatabaseConstructor::class)
 abstract class LocalDatabase : RoomDatabase(){
 

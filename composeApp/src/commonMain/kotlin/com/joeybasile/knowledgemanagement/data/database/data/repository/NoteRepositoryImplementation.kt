@@ -12,8 +12,8 @@ class NoteRepositoryImpl(
         return dao.getAllNotes()
     }
 
-    override suspend fun getNoteById(idA: String, idB: String): NotesEntity? {
-        return dao.getNoteById(idA, idB)
+    override suspend fun getNoteById(id: String): NotesEntity? {
+        return dao.getNoteById(id)
     }
 
     override suspend fun insertNote(note: NotesEntity){

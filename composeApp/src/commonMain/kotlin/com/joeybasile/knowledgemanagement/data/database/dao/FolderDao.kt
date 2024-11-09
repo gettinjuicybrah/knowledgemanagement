@@ -7,8 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.joeybasile.knowledgemanagement.data.database.entity.FolderEntity
-import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
-import com.joeybasile.knowledgemanagement.data.database.entity.TokenEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

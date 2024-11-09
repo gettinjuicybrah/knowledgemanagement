@@ -4,7 +4,7 @@ import com.joeybasile.knowledgemanagement.data.database.dao.UserDao
 import com.joeybasile.knowledgemanagement.data.database.entity.UserEntity
 
 class UserRepositoryImpl(private val userDao: UserDao): UserRepository {
-    override suspend fun updateTheme(theme: String) {
+    override suspend fun updateTheme(theme: Boolean) {
         userDao.updateTheme(theme)
     }
 
@@ -24,5 +24,11 @@ class UserRepositoryImpl(private val userDao: UserDao): UserRepository {
         return userDao.getUserCount()
     }
 
+    override suspend fun getUser(): UserEntity {
+        return userDao.getUser()
+    }
+    override suspend fun setUsername(username: String){
+        userDao.setUsername(username)
+    }
 
 }

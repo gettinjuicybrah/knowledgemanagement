@@ -50,8 +50,7 @@ class ListNotesViewModel : ViewModel(), KoinComponent {
 
     private fun navigateToSelectNote(note: NotesEntity) {
         selectedNoteUseCase.apply {
-            idA = note.idA!!
-            idB = note.idB!!
+            id = note.id!!
             noteTitle = note.title
             noteContent = note.content
             createdAt = note.creation_date

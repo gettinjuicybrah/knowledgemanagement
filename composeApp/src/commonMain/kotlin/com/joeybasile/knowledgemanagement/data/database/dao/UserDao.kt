@@ -9,7 +9,11 @@ import com.joeybasile.knowledgemanagement.data.database.entity.UserEntity
 @Dao
 interface UserDao {
     @Query("Update users SET theme = :theme")
-    suspend fun updateTheme(theme: String)
+    suspend fun updateTheme(theme: Boolean)
+
+    @Query("Update users SET username = :username")
+    suspend fun setUsername(username: String)
+
     @Query("SELECT theme FROM users WHERE id = 1")
     suspend fun getTheme(): String?
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -18,4 +22,7 @@ interface UserDao {
     suspend fun updateUser(user: UserEntity)
     @Query("SELECT COUNT(*) FROM users")
     suspend fun getUserCount(): Int
+
+    @Query("SELECT 1 FROM users")
+    suspend fun getUser(): UserEntity
 }

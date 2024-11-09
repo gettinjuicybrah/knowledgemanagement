@@ -2,18 +2,19 @@ package com.joeybasile.knowledgemanagement.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joeybasile.knowledgemanagement.data.model.UserAuth
+import com.joeybasile.knowledgemanagement.service.PublicAPIService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.joeybasile.knowledgemanagement.ui.navigation.NavigatorImpl
-import com.joeybasile.knowledgemanagement.service.AuthService
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class RegisterViewModel() : ViewModel(), KoinComponent {
 
-    private val authService: AuthService by inject()
+    private val publicAPIService:PublicAPIService by inject()
     private val navigator: NavigatorImpl by inject()
 
     private val _state = MutableStateFlow(RegisterState())
@@ -38,7 +39,9 @@ class RegisterViewModel() : ViewModel(), KoinComponent {
     private fun attemptRegister() {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
-            val result = authService.register(_state.value.username, _state.value.password)
+            val userAuth = UserAuth(_state.value.username, _state.value.password)
+            val result = publicAPIService.register(userAuth)
+            if (result.result) println("Register Success") else println("Register FAILED")
             _state.value = _state.value.copy(isLoading = false)
             navigator.navToLogin()
         }

@@ -12,6 +12,7 @@ import com.joeybasile.knowledgemanagement.ui.navigation.NavigatorImpl
 import com.joeybasile.knowledgemanagement.util.FolderNode
 import com.joeybasile.knowledgemanagement.util.SelectedNoteUseCase
 import com.joeybasile.knowledgemanagement.util.buildDirectoryTree
+import com.joeybasile.knowledgemanagement.util.generateUUID
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -100,8 +101,7 @@ class FolderDirectoryViewModel : ViewModel(), KoinComponent {
 
     private fun navigateToNote(note: NotesEntity) {
         selectedNoteUseCase.apply {
-            idA = note.idA!!
-            idB = note.idB!!
+            id = note.id!!
             noteTitle = note.title
             noteContent = note.content
             createdAt = note.creation_date
@@ -131,8 +131,9 @@ class FolderDirectoryViewModel : ViewModel(), KoinComponent {
     private fun createFolder(folderName: String) {
         viewModelScope.launch {
             val newFolder = FolderEntity( // Generating random ID for now
+                id = generateUUID(),
                 title = folderName,
-                parentFolderId = 0,
+                parentFolderId = "",
                 isExpanded = false
             )
             folderService.insertFolder(newFolder)

@@ -8,6 +8,7 @@ interface FolderRepository {
     suspend fun insertFolder(folder: FolderEntity)
     suspend fun updateFolder(folder: FolderEntity)
     suspend fun deleteFolder(folder: FolderEntity)
-    suspend fun initializeRootFolderIfNeeded()
+    suspend fun initializeRootFolder()
     suspend fun getRootFolder(): FolderEntity
+    suspend fun checkInitialize(): Boolean
 }

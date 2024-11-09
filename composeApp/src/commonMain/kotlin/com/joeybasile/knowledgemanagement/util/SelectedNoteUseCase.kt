@@ -3,9 +3,8 @@ package com.joeybasile.knowledgemanagement.util
 import org.koin.core.component.KoinComponent
 
 data class SelectedNoteUseCase(
-    var idA: String = "",
-    var idB: String = "",
-    var parentFolderId: Int = 0,
+    var id: String = "",
+    var parentFolderId: String = "",
     var noteTitle: String = "",
     var noteContent: String = "",
     var createdAt: String = "",

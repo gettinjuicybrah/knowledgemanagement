@@ -3,7 +3,10 @@ package com.joeybasile.knowledgemanagement.network.request.private
 import com.joeybasile.knowledgemanagement.data.database.entity.FolderEntity
 import com.joeybasile.knowledgemanagement.data.database.entity.NotesEntity
 import com.joeybasile.knowledgemanagement.data.database.entity.UserEntity
+import com.joeybasile.knowledgemanagement.data.model.Folder
+import com.joeybasile.knowledgemanagement.data.model.Note
 import com.joeybasile.knowledgemanagement.data.model.RefreshToken
+import com.joeybasile.knowledgemanagement.data.model.User
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -15,37 +18,38 @@ data class AccessTokenRequest(
 
 @Serializable
 data class UpdateUIThemeRequest(
-    val user: UserEntity)
+    val user: User
+)
 
 
 @Serializable
 data class InsertNoteRequest(
-    val note: NotesEntity,
-    val user: UserEntity
+    val user: User,
+    val note: Note
 )
 @Serializable
 data class DeleteNoteRequest(
-    val note: NotesEntity,
-    val user: UserEntity
+    val user: User,
+    val note: Note
 
 )@Serializable
 data class UpdateNoteRequest(
-    val note: NotesEntity,
-    val user: UserEntity
+    val user: User,
+    val note: Note
 )
 
 @Serializable
 data class InsertFolderRequest(
-    val note: FolderEntity,
-    val user: UserEntity
+    val user: User,
+    val folder: Folder
 )
 @Serializable
 data class DeleteFolderRequest(
-    val note: FolderEntity,
-    val user: UserEntity
+    val user: User,
+    val folder: Folder
 
 )@Serializable
 data class UpdateFolderRequest(
-    val note: FolderEntity,
-    val user: UserEntity
+    val user: User,
+    val folder: Folder
 )

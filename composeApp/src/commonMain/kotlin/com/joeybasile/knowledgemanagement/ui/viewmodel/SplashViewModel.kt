@@ -24,7 +24,7 @@ class SplashViewModel: ViewModel(), KoinComponent {
         userService.initializeUserRecordIfNeeded()
 
         val theme = userService.getTheme()
-        val isDark = theme == "dark"
+        val isDark = theme
         ThemeManager.isDarkTheme = isDark
 
         val hasRefreshToken = tokenService.getRefreshToken() != null

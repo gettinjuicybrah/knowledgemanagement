@@ -41,8 +41,7 @@ class SeeNoteViewModel : ViewModel(), KoinComponent {
     }
     private fun loadSelectedNote() {
         _state.value = _state.value.copy(
-            idA = selectedNoteUseCase.idA,
-            idB = selectedNoteUseCase.idB,
+            id = selectedNoteUseCase.id,
             parentFolderId = selectedNoteUseCase.parentFolderId,
             title = selectedNoteUseCase.noteTitle,
             content = selectedNoteUseCase.noteContent,
@@ -70,8 +69,7 @@ The new state object is then assigned back to _state.value
         viewModelScope.launch {
             val currentState = _state.value
             val updatedNote = NotesEntity(
-                idA = currentState.idA,
-                idB = currentState.idB,
+                id = currentState.id,
                 parentFolderId = currentState.selectedFolder?.id,
                 title = currentState.title,
                 content = currentState.content,
@@ -109,9 +107,8 @@ The new state object is then assigned back to _state.value
 }
 
 data class SeeNoteState(
-    val idA: String = "",
-    val idB: String = "",
-    val parentFolderId: Int? = 0,
+    val id: String = "",
+    val parentFolderId: String? = "",
     val title: String = "",
     val content: String = "",
     val creation_date: String = "",

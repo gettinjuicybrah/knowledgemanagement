@@ -2,12 +2,12 @@ package com.joeybasile.knowledgemanagement.data.database.entity
 
 import androidx.room.Entity
 import androidx.room.Index
+import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
 @Serializable
 @Entity(
     tableName = "notes",
-    primaryKeys = ["idA", "idB"],
     indices = [Index(value = ["parentFolderId"])],
     foreignKeys = [androidx.room.ForeignKey(
         entity = FolderEntity::class,
@@ -16,10 +16,10 @@ import kotlinx.serialization.Serializable
     )]
 )
 data class NotesEntity(
-    val idA: String,
-    val idB: String,
+    @PrimaryKey
+    val id: String,
     //this should never be null.
-    val parentFolderId: Int?,
+    val parentFolderId: String?,
     val title: String,
     val content: String,
     val creation_date: String,

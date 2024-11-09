@@ -14,8 +14,8 @@ import kotlinx.serialization.Serializable
 )
 data class FolderEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
+    val id: String,
     val title: String,
-    val parentFolderId: Int?,
+    val parentFolderId: String?,
     val isExpanded: Boolean
 )

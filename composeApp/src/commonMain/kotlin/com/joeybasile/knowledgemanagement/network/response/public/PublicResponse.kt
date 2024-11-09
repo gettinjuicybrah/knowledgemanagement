@@ -5,6 +5,11 @@ import com.joeybasile.knowledgemanagement.data.model.RefreshToken
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
+@Serializable
+data class RegisterResponse(
+    val result: Boolean
+)
+
 sealed class LoginResponse{
     @Serializable
     data class Success(
@@ -12,14 +17,11 @@ sealed class LoginResponse{
         val accessToken:AccessToken,
         @Contextual
         val refreshToken:RefreshToken,
-        val userId:String
+        val userId:String,
+        val userTheme: Boolean
     ):LoginResponse()
     @Serializable
     data class Fail(
         val fail:Boolean
     ):LoginResponse()
 }
-@Serializable
-data class RegisterResponse(
-    val result: Boolean
-)

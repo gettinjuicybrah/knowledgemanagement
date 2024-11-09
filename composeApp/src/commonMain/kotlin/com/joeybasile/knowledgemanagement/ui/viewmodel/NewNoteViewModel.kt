@@ -56,8 +56,7 @@ class NewNoteViewModel : ViewModel(), KoinComponent {
     private fun insertNote() {
         viewModelScope.launch {
             val note = NotesEntity(
-                idA = Uuid.random().toString(),
-                idB = Uuid.random().toString(),
+                id = Uuid.random().toString(),
                 parentFolderId = _state.value.parentFolderId,
                 title = _state.value.title,
                 content = _state.value.content,
@@ -98,7 +97,7 @@ data class NewNoteState(
     val version: Int? = 0,
     val folderList: List<FolderEntity> = emptyList(),
     val selectedFolder: FolderEntity? = null,
-    val parentFolderId: Int? = 0,
+    val parentFolderId: String? = "",
     val isDropdownExpanded: Boolean = false
 )
 

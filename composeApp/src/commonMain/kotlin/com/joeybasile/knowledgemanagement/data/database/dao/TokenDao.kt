@@ -4,34 +4,46 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.joeybasile.knowledgemanagement.data.database.entity.TokenEntity
+import com.joeybasile.knowledgemanagement.data.database.entity.AccessTokenEntity
+import com.joeybasile.knowledgemanagement.data.database.entity.RefreshTokenEntity
 
 @Dao
 interface TokenDao {
-    @Query("SELECT accessToken FROM tokens WHERE id = 1")
-    suspend fun getAccessToken(): String?
-    @Query("SELECT refreshToken FROM tokens WHERE id = 1")
-    suspend fun getRefreshToken(): String?
+    @Query("SELECT token FROM accessToken WHERE id = 1")
+    suspend fun getAccessToken(): String
+    @Query("SELECT token FROM refreshToken WHERE id = 1")
+    suspend fun getRefreshToken(): String
 
-    @Query("SELECT accessTokenExpiry FROM tokens WHERE id = 1")
-    suspend fun getAccessTokenExpiry(): String?
+    @Query("SELECT expiry FROM accessToken WHERE id = 1")
+    suspend fun getAccessTokenExpiry(): Long
 
-    @Query("SELECT refreshTokenExpiry FROM tokens WHERE id = 1")
-    suspend fun getRefreshTokenExpiry(): String?
+    @Query("SELECT expiry FROM refreshToken WHERE id = 1")
+    suspend fun getRefreshTokenExpiry(): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertToken(token: TokenEntity)
+    suspend fun insertAccessToken(token: AccessTokenEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRefreshToken(token: RefreshTokenEntity)
+
+    @Query("SELECT 1 FROM refreshToken")
+    suspend fun getRefreshTokenRecord()
 
     // If you need to update individual fields, you can use Update or custom queries
-    @Query("UPDATE tokens SET accessToken = :accessToken, accessTokenExpiry = :accExpire WHERE id = 1")
-    suspend fun updateAccessToken(accessToken: String, accExpire: String)
+    @Query("UPDATE accessToken SET token = :token, expiry = :expiry WHERE id = 1")
+    suspend fun updateAccessToken(token: String, expiry: Long)
 
-    @Query("UPDATE tokens SET refreshToken = :refreshToken, refreshTokenExpiry = :refreshExpire WHERE id = 1")
-    suspend fun updateRefreshToken(refreshToken: String, refreshExpire: String)
+    @Query("UPDATE refreshToken SET token = :token, expiry = :expiry WHERE id = 1")
+    suspend fun updateRefreshToken(token: String, expiry: Long)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun initializeTokenRecord(token: TokenEntity)
+    suspend fun initializeAccessTokenRecord(token: AccessTokenEntity)
 
-    @Query("SELECT COUNT(*) FROM tokens")
-    suspend fun getTokenCount(): Int
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun initializeRefreshTokenRecord(token: RefreshTokenEntity)
+
+    @Query("SELECT COUNT(*) FROM accessToken")
+    suspend fun getAccessTokenCount(): Int
+
+    @Query("SELECT COUNT(*) FROM refreshToken")
+    suspend fun getRefreshTokenCount(): Int
 }
